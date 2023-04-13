@@ -179,5 +179,70 @@ export default {
       const userDeleted = (await response.json()) as LoginMessageResponse;
       return userDeleted;
     },
+    // 2.5. Delete a user as admin
+    deleteUserAsAdmin: async (
+      _parent: unknown,
+      args: {id: string},
+      user: UserIdWithToken
+    ) => {
+      if (!user.token || user.role !== 'admin') {
+        throw new GraphQLError('Unauthorized', {
+          extensions: {
+            code: 'UNAUTHORIZED',
+          },
+        });
+      }
+      const response = await fetch(`${process.env.AUTH_URL}/users/${args.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(args),
+      });
+      if (!response.ok) {
+        throw new GraphQLError(response.statusText, {
+          extensions: {
+            code: 'NOT_FOUND',
+          },
+        });
+      }
+      const userDeleted = (await response.json()) as LoginMessageResponse;
+      return userDeleted;
+    },
+    // 2.6. Update a user as admin
+    updateUserAsAdmin: async (
+      _parent: unknown,
+      args: {user: User},
+      user: UserIdWithToken
+    ) => {
+      if (!user.token || user.role !== 'admin') {
+        throw new GraphQLError('Unauthorized', {
+          extensions: {
+            code: 'UNAUTHORIZED',
+          },
+        });
+      }
+      const response = await fetch(
+        `${process.env.AUTH_URL}/users/${args.user.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify(args.user),
+        }
+      );
+      if (!response.ok) {
+        throw new GraphQLError(response.statusText, {
+          extensions: {
+            code: 'NOT_FOUND',
+          },
+        });
+      }
+      const userUpdated = (await response.json()) as LoginMessageResponse;
+      return userUpdated;
+    },
   },
 };
