@@ -294,7 +294,7 @@ const userPutCat = (
           reject(err);
         } else {
           const updatedCat = response.body.data.updateCat;
-          expect(updatedCat.cat_name).toBe(cat.catName);
+          expect(updatedCat.catName).toBe(cat.cat_name);
           expect(updatedCat.weight).toBe(cat.weight);
           expect(updatedCat).toHaveProperty('birthdate');
           resolve(updatedCat);

@@ -58,17 +58,13 @@ export default {
       }
       const cat = await catModel.findById(args.id);
 
-      const ownerId = cat?.owner._id
-        .toString()
-        .replace(/ObjectId\("(.*)"\)/, '$1');
-
       if (!cat) {
         throw new GraphQLError('Cat not found', {
           extensions: {code: 'NOT_FOUND'},
         });
       }
 
-      if (ownerId !== user.id) {
+      if (cat.owner.toString() !== user.id.toString()) {
         throw new GraphQLError('Not authorized to update cat', {
           extensions: {code: 'NOT_AUTHORIZED'},
         });
@@ -85,17 +81,13 @@ export default {
       }
       const cat = await catModel.findById(args.id);
 
-      const ownerId = cat?.owner._id
-        .toString()
-        .replace(/ObjectId\("(.*)"\)/, '$1');
-
       if (!cat) {
         throw new GraphQLError('Cat not found', {
           extensions: {code: 'NOT_FOUND'},
         });
       }
 
-      if (ownerId !== user.id) {
+      if (cat.owner.toString() !== user.id.toString()) {
         throw new GraphQLError('Not authorized to update cat', {
           extensions: {code: 'NOT_AUTHORIZED'},
         });
