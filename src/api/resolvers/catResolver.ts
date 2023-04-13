@@ -53,8 +53,9 @@ export default {
     },
     // 2.2. Update a cat
     updateCat: async (_parent: unknown, args: Cat, user: UserIdWithToken) => {
-      console.log(user);
-      if (!user.token) {
+      console.log(user, args.owner.id);
+
+      if (!user.token && args.owner.id !== user.id) {
         throw new GraphQLError('Not authorized', {
           extensions: {code: 'NOT_AUTHORIZED'},
         });
@@ -63,6 +64,10 @@ export default {
     },
     // 2.3. Delete a cat
     deleteCat: async (_parent: unknown, args: Cat, user: UserIdWithToken) => {
+      console.log('1' + user.token);
+      console.log('2' + args.owner.id);
+      console.log('3' + args.owner.id !== user.id);
+
       if (!user.token) {
         throw new GraphQLError('Not authorized', {
           extensions: {code: 'NOT_AUTHORIZED'},
