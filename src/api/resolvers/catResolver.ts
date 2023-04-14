@@ -56,21 +56,12 @@ export default {
           extensions: {code: 'NOT_AUTHORIZED'},
         });
       }
-      const cat = await catModel.findById(args.id);
 
-      if (!cat) {
-        throw new GraphQLError('Cat not found', {
-          extensions: {code: 'NOT_FOUND'},
-        });
-      }
-
-      if (cat.owner.toString() !== user.id.toString()) {
-        throw new GraphQLError('Not authorized to update cat', {
-          extensions: {code: 'NOT_AUTHORIZED'},
-        });
-      }
-
-      return await catModel.findByIdAndUpdate(args.id, args, {new: true});
+      return await catModel.findOneAndUpdate(
+        {_id: args.id, owner: user.id},
+        args,
+        {new: true}
+      );
     },
     // 2.3. Delete a cat
     deleteCat: async (_parent: unknown, args: Cat, user: UserIdWithToken) => {
@@ -79,20 +70,8 @@ export default {
           extensions: {code: 'NOT_AUTHORIZED'},
         });
       }
-      const cat = await catModel.findById(args.id);
 
-      if (!cat) {
-        throw new GraphQLError('Cat not found', {
-          extensions: {code: 'NOT_FOUND'},
-        });
-      }
-
-      if (cat.owner.toString() !== user.id.toString()) {
-        throw new GraphQLError('Not authorized to update cat', {
-          extensions: {code: 'NOT_AUTHORIZED'},
-        });
-      }
-      return await catModel.findByIdAndDelete(args.id);
+      return await catModel.findOneAndDelete({_id: args.id, owner: user.id});
     },
     // 2.4. Update a cat as admin
     updateCatAsAdmin: async (
